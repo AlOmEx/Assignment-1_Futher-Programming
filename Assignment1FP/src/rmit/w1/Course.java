@@ -3,9 +3,9 @@ package rmit.w1;
 public class Course implements ListManagement{
     private String courseID;
     private String courseName;
-    private int numOfCre;
+    private String numOfCre;
 
-    public Course(String courseID, String courseName, int numOfCre) {
+    public Course(String courseID, String courseName, String numOfCre) {
         this.courseID = courseID;
         this.courseName = courseName;
         this.numOfCre = numOfCre;
@@ -27,11 +27,20 @@ public class Course implements ListManagement{
         this.courseName = courseName;
     }
 
-    public int getNumOfCre() {
+    public String getNumOfCre() {
         return numOfCre;
     }
 
-    public void setNumOfCre(int numOfCre) {
+    public void setNumOfCre(String numOfCre) {
         this.numOfCre = numOfCre;
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "courseID='" + courseID + '\'' +
+                ", courseName='" + courseName + '\'' +
+                ", numOfCre='" + numOfCre + '\'' +
+                '}';
     }
 }

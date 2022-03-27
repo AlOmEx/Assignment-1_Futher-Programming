@@ -2,10 +2,16 @@ package rmit.w1;
 
 import java.util.Date;
 
-public class Student implements ListManagement {
+public class Student implements ListManagement{
     private String studentID;
     private String studentName;
-    private Date birthDate;
+    private String birthDate;
+
+    public Student(String studentID, String studentName, String birthDate) {
+        this.studentID = studentID;
+        this.studentName = studentName;
+        this.birthDate = birthDate;
+    }
 
     public String getStudentID() {
         return studentID;
@@ -23,17 +29,20 @@ public class Student implements ListManagement {
         this.studentName = studentName;
     }
 
-    public Date getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
-    public Student(String studentID, String studentName, Date birthDate) {
-        this.studentID = studentID;
-        this.studentName = studentName;
-        this.birthDate = birthDate;
+    @Override
+    public String toString() {
+        return "Student{" +
+                "studentID='" + studentID + '\'' +
+                ", studentName='" + studentName + '\'' +
+                ", birthDate=" + birthDate +
+                '}';
     }
 }
