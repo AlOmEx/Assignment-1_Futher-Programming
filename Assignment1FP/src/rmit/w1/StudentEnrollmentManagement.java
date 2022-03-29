@@ -25,23 +25,23 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
     }
 
     @Override
-    public void Update(String sid, String oldCid, String newCid, String semester) {
+    public void updateExisting(String sid, String oldCid, String newCid, String semester) {
         if(!studentAvailability(sid)){
-            System.out.println("Student is not found in archive");
+            System.out.println("STUDENT IS NOT FOUND IN THE ARCHIVE");
         }
         else if(!courseAvailability(oldCid)){
-            System.out.println("Course is not found in the archive");
+            System.out.println("COURSE IS NOT FOUND IN THE ARCHIVE");
         }
         else if(!enrollmentAvailability(sid,oldCid,semester)){
-            System.out.println("Enrollment is not found in the archive");
+            System.out.println("ENROLLMENT IS NOT FOUND IN THE ARCHIVE");
         }
         else{
             ListIterator<StudentEnrollment> list = listOfEnrollments.listIterator();
-            for (int i = 0; i < listOfEnrollments.size(); i++) {
+            for (StudentEnrollment listOfEnrollment : listOfEnrollments) {
                 list.next();
-                if (listOfEnrollments.get(i).getSID().equalsIgnoreCase(sid) &&
-                        listOfEnrollments.get(i).getCID().equalsIgnoreCase(oldCid) &&
-                        listOfEnrollments.get(i).getSemester().equalsIgnoreCase(semester)) {
+                if (listOfEnrollment.getSID().equalsIgnoreCase(sid) &&
+                        listOfEnrollment.getCID().equalsIgnoreCase(oldCid) &&
+                        listOfEnrollment.getSemester().equalsIgnoreCase(semester)) {
                     list.remove();
                     Add(sid, newCid, semester);
                 }
@@ -61,11 +61,11 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
             System.out.println("Enrollment is not found in the archive");
         }
         ListIterator<StudentEnrollment> list = listOfEnrollments.listIterator();
-        for (int i = 0; i < listOfEnrollments.size(); i++) {
+        for (StudentEnrollment listOfEnrollment : listOfEnrollments) {
             list.next();
-            if (listOfEnrollments.get(i).getSID().equalsIgnoreCase(sid) &&
-                    listOfEnrollments.get(i).getCID().equalsIgnoreCase(cid) &&
-                    listOfEnrollments.get(i).getSemester().equalsIgnoreCase(semester)) {
+            if (listOfEnrollment.getSID().equalsIgnoreCase(sid) &&
+                    listOfEnrollment.getCID().equalsIgnoreCase(cid) &&
+                    listOfEnrollment.getSemester().equalsIgnoreCase(semester)) {
                 list.remove();
                 System.out.println("Successfully Removed!");
             }
@@ -151,6 +151,68 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
             return false;
         }
         else {
+            return true;
+        }
+    }
+    public boolean manuallyAddStudent(String input) {
+        if (!input.contains(",")) {
+            System.out.println("PLEASE ENTER VALUE WITH COMMA IN BETWEEN");
+            return false;
+
+        }
+        else if (!studentIDValidate(input.split(",")[0], "S")){
+            System.out.println("INVALID STUDENT'S ID");
+            return false;
+
+        }
+        else if(studentAvailability(input.split(",")[0])){
+            System.out.println("STUDENT ALREADY EXIST");
+            return false;
+        }
+        else {
+            System.out.println("PASSED VALIDATION");
+            Student student = new Student(input.split(",")[0], input.split(",")[1], input.split(",")[2]);
+            ListManagement.listOfStudents.add(student);
+            return true;
+        }
+    }
+    public boolean manuallyAddCourse(String input) {
+        if (!input.contains(",")) {
+            System.out.println("PLEASE ENTER VALUE WITH COMMA IN BETWEEN");
+            return false;
+
+        } else if (!courseIDValidate((input.split(",")[0]))){
+            System.out.println("INVALID COURSE'S ID");
+            return false;
+        }
+        else if(courseAvailability(input.split(",")[0])){
+            System.out.println("COURSE ALREADY EXIST");
+            return false;
+        }
+        else {
+            System.out.println("PASSED VALIDATION");
+            Course course = new Course(input.split(",")[0], input.split(",")[1], input.split(",")[2]);
+            ListManagement.listOfCourses.add(course);
+            return true;
+        }
+    }
+    public boolean manuallyAddEnrollment(String input){
+        if(!input.contains(",")){
+            System.out.println("PLEASE ENTER VALUE WITH COMMA IN BETWEEN");
+            return false;
+        }
+        else if(!studentAvailability(input.split(",")[0])&&!studentIDValidate(input.split(",")[0], "S")) {
+            System.out.println("STUDENT EITHER HAVE NOT YET BEEN ADDED OR EXISTED");
+            return false;
+        }
+        else if(!courseAvailability(input.split(",")[1])&&!courseIDValidate(input.split(",")[1])){
+            System.out.println("COURSE EITHER HAVE NOT YET BEEN ADDED OR EXISTED");
+            return false;
+        }
+        else{
+            System.out.println("PASSED VALIDATION");
+            StudentEnrollment studentEnrollment = new StudentEnrollment(input.split(",")[0], input.split(",")[1], input.split(",")[2]);
+            StudentEnrollmentManager.listOfEnrollments.add(studentEnrollment);
             return true;
         }
     }
