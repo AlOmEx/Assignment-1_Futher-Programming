@@ -118,14 +118,9 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
         }
         return false;
     }
-    public boolean studentIDValidate(String sid, String firstChar) throws NumberFormatException{
+    public boolean studentIDValidate(String sid, String firstChar){
         String newSID = sid.toUpperCase();
-
-        if(sid.length() != 7){
-            System.out.println("SID HAS INVALID LENGTH");
-            return false;
-        }
-        else if(!newSID.matches("^[A-Z]\\d{6}")){
+        if(!newSID.matches("^[A-Z]\\d{6}")){
             System.out.println("SID DOES NOT FOLLOW GIVEN PATTERN");
             return false;
         }
@@ -134,40 +129,24 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
             return false;
         }
         else {
-            newSID = newSID.replaceFirst(firstChar, "");
-            try {
-                int idNumber = Integer.parseInt(newSID);
-                return true;
-            } catch (NumberFormatException e) {
-                System.out.println("SID NUMBER IS NOT A NUMBER");
-                return false;
-            }
-        }
-
-    }
-    public boolean courseIDValidate(String cid) throws NumberFormatException{
-        String newCID = cid.toUpperCase();
-        int idNumber;
-        if(cid.length() != 8){
-            System.out.println("CID HAS INVALID LENGTH");
-            return false;
-        }
-        else if (!newCID.matches("^[A-Z]{4}\\d{4}")||newCID.matches("^[A-Z]{3}\\d{4}")){
-            System.out.println("CID DOES NOT FOLLOW GIVEN PATTERN");
-            return false;
-        }
-        else {
             return true;
         }
 
     }
-    public boolean semesterValidate(String semester) throws NumberFormatException{
-        String newSemester = semester.toUpperCase();
-        if (semester.length() != 5){
-            System.out.println("SEMESTER INPUT IS LONG");
+    public boolean courseIDValidate(String cid){
+        String newCID = cid.toUpperCase();
+        if (newCID.matches("^[A-Z]{3}\\d{4}")||newCID.matches("^[A-Z]{4}\\d{4}")){
+            return true;
+        }
+        else {
+            System.out.println("CID DOES NOT FOLLOW GIVEN PATTERN");
             return false;
         }
-        else if(!newSemester.matches("^\\d{4}[A-Z]")){
+
+    }
+    public boolean semesterValidate(String semester){
+        String newSemester = semester.toUpperCase();
+        if(!newSemester.matches("^\\d{4}[A-Z]")){
             System.out.println("INPUT DOES NOT FOLLOW GIVEN PATTERN");
             return false;
         }
@@ -175,5 +154,6 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
             return true;
         }
     }
+
 
 }
