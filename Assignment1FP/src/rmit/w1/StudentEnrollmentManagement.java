@@ -1,6 +1,7 @@
 package rmit.w1;
 
 import java.util.ListIterator;
+import java.util.Scanner;
 
 public class StudentEnrollmentManagement implements StudentEnrollmentManager {
     public StudentEnrollmentManagement() {
@@ -25,28 +26,102 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
     }
 
     @Override
-    public void updateExisting(String sid, String oldCid, String newCid, String semester) {
-        if(!studentAvailability(sid)){
-            System.out.println("STUDENT IS NOT FOUND IN THE ARCHIVE");
-        }
-        else if(!courseAvailability(oldCid)){
-            System.out.println("COURSE IS NOT FOUND IN THE ARCHIVE");
-        }
-        else if(!enrollmentAvailability(sid,oldCid,semester)){
-            System.out.println("ENROLLMENT IS NOT FOUND IN THE ARCHIVE");
-        }
-        else{
-            ListIterator<StudentEnrollment> list = listOfEnrollments.listIterator();
-            for (StudentEnrollment listOfEnrollment : listOfEnrollments) {
-                list.next();
-                if (listOfEnrollment.getSID().equalsIgnoreCase(sid) &&
-                        listOfEnrollment.getCID().equalsIgnoreCase(oldCid) &&
-                        listOfEnrollment.getSemester().equalsIgnoreCase(semester)) {
-                    list.remove();
-                    Add(sid, newCid, semester);
+    public void Update() {
+        Scanner scanner = new Scanner(System.in);
+        while (true){
+
+            //Ask user for ID
+            System.out.println("PLEASE ENTER YOUR SID");
+            String userID = scanner.nextLine();
+            for (int user = 0; user < ListManagement.listOfStudents.size(); user++) {
+                if(ListManagement.listOfStudents.get(user).getStudentID().equalsIgnoreCase(userID.toUpperCase())){
+                    System.out.println("WELCOME"+" "+ ListManagement.listOfStudents.get(user).getStudentName().toUpperCase());
+                    System.out.println("\n");
                 }
             }
+
+            //Print out all courses based on user's ID
+            System.out.println("YOUR CURRENT COURSES ARE: ");
+            int position;
+            for (int i = 0; i < StudentEnrollmentManager.listOfEnrollments.size(); i++) {
+                if(StudentEnrollmentManager.listOfEnrollments.get(i).getSID().equalsIgnoreCase(userID)){
+                    position = i;
+                    for (int j = 0; j < ListManagement.listOfCourses.size(); j++) {
+                        if(StudentEnrollmentManager.listOfEnrollments.get(position).getCID().equalsIgnoreCase(ListManagement.listOfCourses.get(j).getCourseID())){
+                            System.out.println(ListManagement.listOfCourses.get(j).getCourseID()+" "+ListManagement.listOfCourses.get(j).getCourseName());
+                        }
+                    }
+                }
+            }
+
+            //Main menu
+            System.out.println("\n");
+            System.out.println("CHOOSE THE FOLLOWING METHODS");
+            System.out.println("1. ADD AN ENROLLMENT");
+            System.out.println("2. DELETE AN ENROLLMENT");
+            System.out.println("3. RETURN TO MAIN MENU");
+            System.out.println("YOUR OPTION IS: ");
+            String userInnerChoice = scanner.nextLine();
+            if(userInnerChoice.equalsIgnoreCase("1")){
+                //Ask user for input
+                System.out.println("PLEASE ENTER THE FOLLOWING VALUES WITH COMMA IN BETWEEN");
+                System.out.println("COURSE ID, SEMESTER");
+                String userAddInput = scanner.nextLine();
+                //Check student's ID patterns
+                if(!studentIDValidate(userID,"S")){
+                    break;
+                }
+                //Check course's ID patterns
+                else if(!courseIDValidate(userAddInput.split(",")[0])){
+                    break;
+                }
+                //Check semester pattern
+                else if(!semesterValidate(userAddInput.split(",")[1])){
+                    break;
+                }
+
+                //If all conditions above passed, use Add method to add in Enrollment List
+                else {
+                    Add(userID,userAddInput.split(",")[0],userAddInput.split(",")[1]);
+                    continue;
+                }
+
+            }
+            if (userInnerChoice.equalsIgnoreCase("2")){
+                //Ask user for input
+                System.out.println("PLEASE ENTER THE FOLLOWING VALUES WITH COMMA IN BETWEEN");
+                System.out.println("COURSE ID, SEMESTER");
+                String userAddInput = scanner.nextLine();
+
+                //Check student's ID patterns
+                if(!studentIDValidate(userID,"S")){
+                    break;
+                }
+                //Check course's ID patterns
+                else if(!courseIDValidate(userAddInput.split(",")[0])){
+                    break;
+                }
+                //Check semester pattern
+                else if(!semesterValidate(userAddInput.split(",")[1])){
+                    break;
+                }
+                //If all conditions above passed, use Delete method to delete enrollment
+                else {
+                    System.out.println("SUCCESSFULLY DELETE ENROLLMENT");
+                    Delete(userID,userAddInput.split(",")[0],userAddInput.split(",")[1]);
+                    continue;
+                }
+
+            }
+            if (userInnerChoice.equalsIgnoreCase("3")){
+                break;
+            }
+            else {
+                System.out.println("INVALID INPUT. PLEASE TRY AGAIN");
+            }
+
         }
+
     }
 
     @Override
