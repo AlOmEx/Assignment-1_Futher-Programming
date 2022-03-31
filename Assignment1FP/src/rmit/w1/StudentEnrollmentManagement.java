@@ -1,6 +1,8 @@
 package rmit.w1;
 
-import java.util.ListIterator;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -135,26 +137,25 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
 
     @Override
     public void Delete(String sid, String cid, String semester) {
-        if(!studentAvailability(sid)){
-            System.out.println("Student is not found in archive");
+        //check if the student is in the Student List
+        if (!studentAvailability(sid)) {
+            System.out.println("STUDENT IS NOT FOUND IN THE ARCHIVE");
         }
-        else if(!courseAvailability(cid)){
-            System.out.println("Course is not found in the archive");
-        }
-        else if(!enrollmentAvailability(sid,cid,semester)){
-            System.out.println("Enrollment is not found in the archive");
-        }
-        ListIterator<StudentEnrollment> list = listOfEnrollments.listIterator();
-        for (StudentEnrollment listOfEnrollment : listOfEnrollments) {
-            list.next();
-            if (listOfEnrollment.getSID().equalsIgnoreCase(sid) &&
-                    listOfEnrollment.getCID().equalsIgnoreCase(cid) &&
-                    listOfEnrollment.getSemester().equalsIgnoreCase(semester)) {
-                list.remove();
-                System.out.println("Successfully Removed!");
-            }
 
+        //check if the course is found in the Course List
+        else if (!courseAvailability(cid)) {
+            System.out.println("COURSE IS NOT FOUND IN THE ARCHIVE");
         }
+
+        //check if the enrollment exist or not
+        else if (!enrollmentAvailability(sid, cid, semester)) {
+            System.out.println("ENROLLMENT IS NOT FOUND IN THE ARCHIVE");
+        }
+
+        //if all conditions above passed, remove enrollment from the Enrollment List
+        listOfEnrollments.removeIf(items -> items.getSID().equalsIgnoreCase(sid) &&
+                items.getCID().equalsIgnoreCase(cid) &&
+                items.getSemester().equalsIgnoreCase(semester));
     }
 
     @Override
@@ -265,7 +266,193 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
 
     @Override
     public void getAll(String sid, String cid, String semester) {
+        Scanner scanner1 = new Scanner(System.in);
+        assert sid != null;
+        assert cid != null;
+        assert semester != null;
+        ArrayList<String> temporary = new ArrayList<>();
+        ArrayList<String> Student = new ArrayList<>();
+        ArrayList<String> Course = new ArrayList<>();
+        ArrayList<String> courseSem = new ArrayList<>();
+        // If parameters String sid and String cid both are empty, run code for finding All Courses of a Semester
+        if (sid.isBlank() && cid.isBlank()) {
+            try {
 
+                System.out.println("YOUR SEMESTER HAS THESE COURSES: ");
+                for (int course = 0; course < listOfEnrollments.size(); course++) {
+                    for (int j = 0; j < listOfEnrollments.size(); j++) {
+                        // Loop through Enrollment List with filtering the same course
+                        if (listOfEnrollments.get(course).getSemester().equalsIgnoreCase(semester) && !temporary.contains(listOfEnrollments.get(course).getCID())) {
+                            temporary.add(listOfEnrollments.get(course).getCID());
+                            // Add Course to the first temporary ArrayList
+                        }
+                    }
+
+                }
+                for (int courseName = 0; courseName < ListManagement.listOfCourses.size(); courseName++) {
+                    for (String s : temporary) {
+                        if (ListManagement.listOfCourses.get(courseName).getCourseID().equalsIgnoreCase(s)) {
+                            System.out.println(ListManagement.listOfCourses.get(courseName).getCourseID() + " " + ListManagement.listOfCourses.get(courseName).getCourseName());
+                            String lineOfData = ListManagement.listOfCourses.get(courseName).getCourseID() + "," + ListManagement.listOfCourses.get(courseName).getCourseName() + "," + ListManagement.listOfCourses.get(courseName).getNumOfCre();
+                            courseSem.add(lineOfData);
+                            // Add Course's Information into the second temporary ArrayList
+                        }
+                    }
+
+
+                }
+            }
+            // If reaches to end of the list and have not found a match, print out an error
+            catch (IndexOutOfBoundsException e) {
+                System.out.println("HAVE REACHED THE END OF THE LIST AND NOT FOUND ANY COURSE");
+            }
+            while (true) {
+                // Ask if user choose to export data to CSV file
+                System.out.println("EXPORT DATA TO CSV FILE?");
+                System.out.println("1. YES");
+                System.out.println("2. NO");
+                String choice = scanner1.nextLine();
+                if (choice.equalsIgnoreCase("1")) {
+                    // Write Courses information to CSV file
+                    try {
+                        String fileName = "List of All courses in semester" + " " + semester.toUpperCase();
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".csv"));
+                        writer.write("CourseID" + "," + "CourseName" + "," + "NumberOfCredit" + "\n");
+                        for (String s : courseSem) {
+                            writer.write(s);
+                        }
+                        writer.close();
+                        System.out.println("GENERATED SUCCESSFULLY");
+                        System.out.println("\n");
+                        break;
+                    } catch (Exception e) {
+                        System.out.println("ERROR");
+                        System.out.println(e);
+                        break;
+                    }
+                }
+                if (choice.equalsIgnoreCase("2")) {
+                    System.out.println("FINISHED");
+                    break;
+                } else {
+                    System.out.println("INVALID INPUT. PLEASE TRY AGAIN");
+                }
+            }
+        }
+        // If parameter String sid is empty, run code to find All Courses that a Student has enrolled in
+        else if (cid.isBlank()) {
+            try {
+                System.out.println("YOUR STUDENT IS ENROLLED IN: ");
+                for (StudentEnrollment listOfEnrollment : listOfEnrollments) {
+                    if (listOfEnrollment.getSID().equalsIgnoreCase(sid) && listOfEnrollment.getSemester().equalsIgnoreCase(semester)) {
+                        // Run through Enrollment List to find Object that matches with user's input
+                        for (int courseName = 0; courseName < ListManagement.listOfCourses.size(); courseName++) {
+                            if (ListManagement.listOfCourses.get(courseName).getCourseID().equalsIgnoreCase(listOfEnrollment.getCID())) {
+                                // Run through Course List to check for a match and get Course Name and ID
+                                System.out.println(ListManagement.listOfCourses.get(courseName).getCourseID() + " " + ListManagement.listOfCourses.get(courseName).getCourseName());
+                                String lineOfData = ListManagement.listOfCourses.get(courseName).getCourseID() + "," + ListManagement.listOfCourses.get(courseName).getCourseName() + "," + ListManagement.listOfCourses.get(courseName).getNumOfCre();
+                                // Add into a temporary ArrayList
+                                Course.add(lineOfData);
+                            }
+                        }
+                    }
+                }
+            }
+            // If reaches to end of the list and have not found a match, print out an error
+            catch (IndexOutOfBoundsException e) {
+                System.out.println("HAVE REACHED THE END OF THE LIST AND NOT FOUND ANY COURSE");
+            }
+            while (true) {
+                // Ask if user choose to export data to CSV file
+                System.out.println("EXPORT DATA TO CSV FILE?");
+                System.out.println("1. YES");
+                System.out.println("2. NO");
+                String choice = scanner1.nextLine();
+                if (choice.equalsIgnoreCase("1")) {
+                    // Write Courses information to CSV file
+                    try {
+                        String fileName = "List of All courses belongs to" + " " + sid.toUpperCase() + " " + "in semester" + semester.toUpperCase();
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".csv"));
+                        writer.write("CourseID" + "," + "CourseName" + "," + "NumberOfCredit" + "\n");
+                        for (String s : Course) {
+                            writer.write(s);
+                        }
+                        writer.close();
+                        System.out.println("GENERATED SUCCESSFULLY");
+                        System.out.println("\n");
+                        break;
+                    } catch (Exception e) {
+                        System.out.println("ERROR");
+                        System.out.println(e);
+                        break;
+                    }
+                }
+                if (choice.equalsIgnoreCase("2")) {
+                    System.out.println("FINISHED");
+                    break;
+                } else {
+                    System.out.println("INVALID INPUT. PLEASE TRY AGAIN");
+                }
+            }
+
+
+        }
+        // If parameter String sid is empty, run cod to find All Students belongs in a Course
+        else if (sid.isBlank()) {
+            try {
+                System.out.println("YOUR COURSE HAS THESE STUDENTS: ");
+                for (StudentEnrollment listOfEnrollment : listOfEnrollments) {
+                    if (listOfEnrollment.getCID().equalsIgnoreCase(cid) && listOfEnrollment.getSemester().equalsIgnoreCase(semester)) {
+                        // Run through Enrollment List to find Object that matches with user's input
+                        for (int studentName = 0; studentName < ListManagement.listOfStudents.size(); studentName++) {
+                            if (ListManagement.listOfStudents.get(studentName).getStudentID().equalsIgnoreCase(listOfEnrollment.getSID())) {
+                                // Run through Student List to check for a match and get Student Name and ID
+                                System.out.println(ListManagement.listOfStudents.get(studentName).getStudentID() + " " + ListManagement.listOfStudents.get(studentName).getStudentName());
+                                String lineOfData = ListManagement.listOfStudents.get(studentName).getStudentID() + "," + ListManagement.listOfStudents.get(studentName).getStudentName() + "," + ListManagement.listOfStudents.get(studentName).getBirthDate();
+                                // Add into a temporary ArrayList
+                                Student.add(lineOfData);
+                            }
+                        }
+                    }
+                }
+            }
+            // If reaches to end of the list and have not found a match, print out an error
+            catch (IndexOutOfBoundsException e) {
+                System.out.println("HAVE REACHED THE END OF THE LIST AND NOT FOUND ANY STUDENT");
+            }
+            while (true) {
+                // Ask if user choose to export data to CSV file
+                System.out.println("EXPORT DATA TO CSV FILE?");
+                System.out.println("1. YES");
+                System.out.println("2. NO");
+                String choice = scanner1.nextLine();
+                if (choice.equalsIgnoreCase("1")) {
+                    try {
+                        // Write Students information to CSV file
+                        String fileName = "List of Students of course" + " " + cid.toUpperCase() + "in semester" + " " + semester.toUpperCase();
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".csv"));
+                        writer.write("StudentID" + "," + "StudentName" + "," + "StudentBirthdate" + "\n");
+                        for (String s : Student) {
+                            writer.write(s + "\n");
+                        }
+                        writer.close();
+                        System.out.println("GENERATED SUCCESSFULLY");
+                        System.out.println("\n");
+                        break;
+                    } catch (Exception e) {
+                        System.out.println("ERROR");
+                        System.out.println(e);
+                        break;
+                    }
+                }
+                if (choice.equalsIgnoreCase("2")) {
+                    System.out.println("FINISHED");
+                    break;
+                } else {
+                    System.out.println("INVALID INPUT. PLEASE TRY AGAIN");
+                }
+            }
+        }
     }
 
     public boolean studentAvailability(String SID) {
