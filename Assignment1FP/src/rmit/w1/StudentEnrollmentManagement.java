@@ -2,6 +2,7 @@ package rmit.w1;
 
 import java.util.ListIterator;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 public class StudentEnrollmentManagement implements StudentEnrollmentManager {
     public StudentEnrollmentManagement() {
@@ -10,17 +11,25 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
 
     @Override
     public void Add(String sid, String cid, String semester) {
-        if(!studentAvailability(sid)){
-            System.out.println("Student is not found in the archive");
+        //check if the student is in the Student List
+        if (!studentAvailability(sid)) {
+            System.out.println("STUDENT IS NOT FOUND IN THE ARCHIVE");
         }
-        else if(!courseAvailability(cid)){
-            System.out.println("Course is not found in the archive");
+
+        //check if the course is found in the Course List
+        else if (!courseAvailability(cid)) {
+            System.out.println("COURSE IS NOT FOUND IN THE ARCHIVE");
         }
-        else if(enrollmentAvailability(sid,cid,semester)){
-            System.out.println("Enrollment has already taken place");
+
+        //check if the enrollment has already take place
+        else if (enrollmentAvailability(sid, cid, semester)) {
+            System.out.println("ENROLLMENT HAS ALREADY TAKEN PLACE");
         }
-        else{
-            StudentEnrollment enrollment = new StudentEnrollment(sid,cid,semester);
+
+        //if all conditions above has passed, continue to add student to Enrollment List
+        else {
+            System.out.println("SUCCESSFULLY ADDED");
+            StudentEnrollment enrollment = new StudentEnrollment(sid, cid, semester);
             listOfEnrollments.add(enrollment);
         }
     }
@@ -149,12 +158,113 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
     }
 
     @Override
-    public void getOne() {
+    public void getOne(String sid, String cid, String semester) {
+        int count = 0;
+        assert sid != null;
+        assert cid != null;
+        assert semester != null;
+        int position;
+        // If parameter String sid is empty, run code for getting one Course from one Semester
+        if (sid.isBlank()) {
+            if (!courseIDValidate(cid)) {
+                System.out.println("CID VALIDATE ERROR");
+            } else if (!semesterValidate(semester)) {
+                System.out.println("SEMESTER VALIDATE ERROR");
+            } else if (!courseAvailability(cid)) {
+                System.out.println("COURSE AVAILABILITY ERROR");
+            } else {
+                try {
+                    while (true) {
+                        if (listOfEnrollments.get(count).getSemester().equalsIgnoreCase(semester) && listOfEnrollments.get(count).getCID().equalsIgnoreCase(cid)) {
+                            position = count;
+                            int finalPosition = position;
+                            IntStream.range(0, ListManagement.listOfCourses.size()).filter(course -> listOfEnrollments.get(finalPosition).getCID().equalsIgnoreCase(ListManagement.listOfCourses.get(course).getCourseID())).mapToObj(course -> ListManagement.listOfCourses.get(course).getCourseID() + " " + ListManagement.listOfCourses.get(course).getCourseName()).forEach(System.out::println);
+                            break;
+                        } else {
+                            count++;
+                        }
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    System.out.println("HAVE REACHED THE END OF THE LIST AND NOT FOUND THE COURSE IN THE SEMESTER");
+                }
+            }
+        }
+        // If parameter String cid is empty, run code for getting one Student from one Semester
+        else if (cid.isBlank()) {
+            if (!studentIDValidate(sid, "S")) {
+                System.out.println("SID VALIDATE ERROR");
+            } else if (!semesterValidate(semester)) {
+                System.out.println("SEMESTER VALIDATE ERROR");
+            } else if (!studentAvailability(sid)) {
+                System.out.println("STUDENT AVAILABILITY ERROR");
+            } else {
+                try {
+                    while (true) {
+                        if (listOfEnrollments.get(count).getSemester().equalsIgnoreCase(semester) && listOfEnrollments.get(count).getSID().equalsIgnoreCase(sid)) {
+                            position = count;
+                            for (int student = 0; student < ListManagement.listOfStudents.size(); student++) {
+                                if (ListManagement.listOfStudents.get(student).getStudentID().equalsIgnoreCase(listOfEnrollments.get(position).getSID())) {
+                                    System.out.println(ListManagement.listOfStudents.get(student).getStudentID() + " " + ListManagement.listOfStudents.get(student).getStudentName());
+                                    break;
+                                }
+                            }
+                            break;
+                        } else {
+                            count++;
+                        }
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    System.out.println("HAVE REACHED THE END OF THE LIST AND NOT FOUND THE STUDENT IN THE SEMESTER");
+                }
+            }
+        }
+        // If parameter String semester is empty, run code for getting one Student from one Course
+        else if (semester.isBlank()) {
+            if (!studentIDValidate(sid, "S")) {
+                System.out.println("SID VALIDATE ERROR");
+            }
+            if (!courseIDValidate(cid)) {
+                System.out.println("CID VALIDATE ERROR");
+            } else if (!studentAvailability(sid)) {
+                System.out.println("STUDENT AVAILABILITY ERROR");
+            } else if (!courseAvailability(cid)) {
+                System.out.println("COURSE AVAILABILITY ERROR");
+            } else {
+                try {
+                    while (true) {
+                        if (listOfEnrollments.get(count).getSID().equalsIgnoreCase(sid) && listOfEnrollments.get(count).getCID().equalsIgnoreCase(cid)) {
+                            position = count;
+                            for (int i = 0; i < listOfEnrollments.size(); i++) {
+                                if (ListManagement.listOfStudents.get(i).getStudentID().equalsIgnoreCase(listOfEnrollments.get(position).getSID())) {
+                                    System.out.println(ListManagement.listOfStudents.get(i).getStudentID() + " " + ListManagement.listOfStudents.get(i).getStudentName());
+                                    break;
+                                }
+                            }
+                            break;
+                        } else {
+                            count++;
+                        }
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    System.out.println("HAVE REACHED THE END OF THE LIST AND NOT FOUND THE STUDENT IN THE COURSE");
+                }
+            }
 
+        }
+        // If all parameters are filled, run code for getting one Enrollment
+        else if (!sid.isBlank() && !cid.isBlank() && !semester.isBlank()) {
+            for (StudentEnrollment listOfEnrollment : listOfEnrollments) {
+                if (listOfEnrollment.getSID().equalsIgnoreCase(sid) &&
+                        listOfEnrollment.getCID().equalsIgnoreCase(cid) &&
+                        listOfEnrollment.getSemester().equalsIgnoreCase(semester)) {
+                    System.out.println();
+                }
+            }
+        }
     }
 
     @Override
-    public void getAll() {
+    public void getAll(String sid, String cid, String semester) {
 
     }
 
@@ -230,20 +340,24 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
         }
     }
     public boolean manuallyAddStudent(String input) {
-        if (!input.contains(",")) {
+        // Check if input from user has a comma in between inputs
+        if (!input.contains(",")&&!input.matches("^[,][2]")) {
             System.out.println("PLEASE ENTER VALUE WITH COMMA IN BETWEEN");
             return false;
 
         }
+        // Check student ID follows the pattern
         else if (!studentIDValidate(input.split(",")[0], "S")){
             System.out.println("INVALID STUDENT'S ID");
             return false;
 
         }
+        // Check if student is in the List
         else if(studentAvailability(input.split(",")[0])){
             System.out.println("STUDENT ALREADY EXIST");
             return false;
         }
+        //If all conditions passed, add student into Student List
         else {
             System.out.println("PASSED VALIDATION");
             Student student = new Student(input.split(",")[0], input.split(",")[1], input.split(",")[2]);
@@ -252,18 +366,24 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
         }
     }
     public boolean manuallyAddCourse(String input) {
-        if (!input.contains(",")) {
+        // Check if input from user has a comma in between inputs
+        if (!input.contains(",")&&!input.matches("^[,][2]")) {
             System.out.println("PLEASE ENTER VALUE WITH COMMA IN BETWEEN");
             return false;
 
-        } else if (!courseIDValidate((input.split(",")[0]))){
+        }
+        // Check course ID follows the pattern
+        else if (!courseIDValidate((input.split(",")[0]))){
             System.out.println("INVALID COURSE'S ID");
             return false;
         }
+        // Check if course is in Course List
         else if(courseAvailability(input.split(",")[0])){
             System.out.println("COURSE ALREADY EXIST");
             return false;
         }
+
+        // If all conditions passed, add course into Course List
         else {
             System.out.println("PASSED VALIDATION");
             Course course = new Course(input.split(",")[0], input.split(",")[1], input.split(",")[2]);
@@ -272,18 +392,22 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
         }
     }
     public boolean manuallyAddEnrollment(String input){
-        if(!input.contains(",")){
+        // Check if input from user has a comma in between inputs
+        if(!input.contains(",")&&!input.matches("^[,][2]")){
             System.out.println("PLEASE ENTER VALUE WITH COMMA IN BETWEEN");
             return false;
         }
+        // Check if student existed and student's ID is validated
         else if(!studentAvailability(input.split(",")[0])&&!studentIDValidate(input.split(",")[0], "S")) {
             System.out.println("STUDENT EITHER HAVE NOT YET BEEN ADDED OR EXISTED");
             return false;
         }
+        // Check if course existed and course's ID is validated
         else if(!courseAvailability(input.split(",")[1])&&!courseIDValidate(input.split(",")[1])){
             System.out.println("COURSE EITHER HAVE NOT YET BEEN ADDED OR EXISTED");
             return false;
         }
+        // If all conditions passed, add Enrollment to Enrollment List
         else{
             System.out.println("PASSED VALIDATION");
             StudentEnrollment studentEnrollment = new StudentEnrollment(input.split(",")[0], input.split(",")[1], input.split(",")[2]);
@@ -291,6 +415,5 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
             return true;
         }
     }
-
 
 }

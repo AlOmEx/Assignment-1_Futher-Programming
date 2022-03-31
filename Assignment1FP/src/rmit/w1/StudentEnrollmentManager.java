@@ -7,7 +7,7 @@ public interface StudentEnrollmentManager {
     void Add(String sid, String cid, String semester);
     void Update();
     void Delete(String sid, String cid, String semester);
-    void getOne();
-    void getAll();
+    void getOne(String sid, String cid, String semester);
+    void getAll(String sid, String cid, String semester);
 
 }
