@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
         System.out.println("WELCOME TO THE STUDENT ENROLLMENT MANAGEMENT SYSTEM");
         StudentEnrollmentManagement systemRun = new StudentEnrollmentManagement();
         Scanner scanner = new Scanner(System.in);
@@ -175,6 +175,133 @@ public class Main {
             else {
                 System.out.println("INVALID INPUT. PLEASE TRY AGAIN");
             }
+
+        }
+
+        while (true){
+            System.out.println("STUDENT ENROLLMENT SYSTEM");
+            System.out.println("1. UPDATE AN ENROLLMENT");
+            System.out.println("2. GET ONE ENROLLMENT");
+            System.out.println("3. GET ALL VALUE");
+            System.out.println("4. PRINT OUT CURRENT LIST");
+            System.out.println("5. EXIT SYSTEM");
+            System.out.println("YOUR OPTION IS: ");
+            String userChoice = scanner.nextLine();
+            if(userChoice.equalsIgnoreCase("1")){
+                systemRun.Update();
+                continue;
+            }
+            if(userChoice.equalsIgnoreCase("2")){
+                System.out.println("ENTER THE FOLLOWING VALUE WITH COMMA IN BETWEEN");
+                System.out.println("STUDENT'S ID, COURSE'S ID, SEMESTER");
+                String userInput4 = scanner.nextLine();
+                if(!userInput4.contains(",")&&!userInput4.matches("^[,][2]")){
+                    System.out.println("INPUT DOES NOT HAVE A COMMA IN BETWEEN");
+                    break;
+                }
+                if(!systemRun.studentIDValidate(userInput4.split(",")[0])){
+                    break;
+                }
+                if(!systemRun.courseIDValidate(userInput4.split(",")[1])){
+                    break;
+                }
+                if(!systemRun.semesterValidate(userInput4.split(",")[2])){
+                    break;
+                }
+                else {
+                    System.out.println("HERE IS YOUR ENROLLMENT DETAIL");
+                    systemRun.getOne(userInput4.split(",")[0], userInput4.split(",")[1], userInput4.split(",")[2]);
+                    continue;
+                }
+
+            }
+            if (userChoice.equalsIgnoreCase("3")){
+                while (true){
+                    System.out.println("PLEASE CHOOSE YOUR OPTION: ");
+                    System.out.println("1. GET ALL COURSES OF A STUDENT IN ONE SEMESTER");
+                    System.out.println("2. GET ALL STUDENTS OF ONE COURSE IN ONE SEMESTER");
+                    System.out.println("3. GET ALL COURSES FROM ONE SEMESTER");
+                    System.out.println("4. GET ALL ENROLLMENT");
+                    System.out.println("5. RETURN TO MAIN MENU");
+                    String userDecision = scanner.nextLine();
+                    if (userDecision.equalsIgnoreCase("1")){
+                        System.out.println("ENTER THE FOLLOWING VALUE WITH COMMA IN BETWEEN");
+                        System.out.println("STUDENT'S ID AND SEMESTER");
+                        String userInput1 = scanner.nextLine();
+                        if(!userInput1.contains(",")){
+                            System.out.println("INPUT DOES NOT HAVE A COMMA IN BETWEEN");
+                            break;
+                        }
+                        else {
+                            systemRun.getAll(userInput1.split(",")[0],"",userInput1.split(",")[1]);
+                            continue;
+                        }
+                    }
+                    if(userDecision.equalsIgnoreCase("2")){
+                        System.out.println("ENTER THE FOLLOWING VALUE WITH COMMA IN BETWEEN");
+                        System.out.println("COURSE'S ID AND SEMESTER");
+                        String userInput2 = scanner.nextLine();
+                        if(!userInput2.contains(",")){
+                            System.out.println("INPUT DOES NOT HAVE A COMMA IN BETWEEN");
+                            break;
+                        }
+                        else {
+                            systemRun.getAll("",userInput2.split(",")[0],userInput2.split(",")[1]);
+                            continue;
+                        }
+                    }
+                    if(userDecision.equalsIgnoreCase("3")){
+                        System.out.println("ENTER THE FOLLOWING VALUE");
+                        System.out.println("SEMESTER");
+                        String userInput3 = scanner.nextLine();
+                        systemRun.getAll("","",userInput3);
+                        continue;
+                    }
+                    if(userDecision.equalsIgnoreCase("4")){
+                        systemRun.getAll("","","");
+                        continue;
+                    }
+                    if(userDecision.equalsIgnoreCase("5")){
+                        break;
+                    }
+                    else {
+                        System.out.println("INVALID INPUT. PLEASE TRY AGAIN");
+                    }
+                }
+                continue;
+            }
+            if (userChoice.equalsIgnoreCase("4")){
+                System.out.println("STUDENT'S INFORMATION");
+                for (int i = 0; i < ListManagement.listOfStudents.size(); i++) {
+                    System.out.printf("%-25s",ListManagement.listOfStudents.get(i).getStudentID());
+                    System.out.printf("%-30s",ListManagement.listOfStudents.get(i).getStudentName());
+                    System.out.println(ListManagement.listOfStudents.get(i).getBirthDate());
+
+                }
+                System.out.println("\n");
+                System.out.println("COURSE'S INFORMATION");
+                for (int i = 0; i < ListManagement.listOfCourses.size(); i++) {
+                    System.out.printf("%-25s",ListManagement.listOfCourses.get(i).getCourseID());
+                    System.out.printf("%-40s",ListManagement.listOfCourses.get(i).getCourseName());
+                    System.out.println(ListManagement.listOfCourses.get(i).getNumOfCre());
+
+                }
+                System.out.println("\n");
+                System.out.println("ENROLLMENT'S INFORMATION");
+                for (int i = 0; i < StudentEnrollmentManager.listOfEnrollments.size(); i++) {
+                    System.out.printf("%-25s",StudentEnrollmentManager.listOfEnrollments.get(i).getSID());
+                    System.out.printf("%-30s",StudentEnrollmentManager.listOfEnrollments.get(i).getCID());
+                    System.out.println(StudentEnrollmentManager.listOfEnrollments.get(i).getSemester());
+                }
+                continue;
+            }
+            if(userChoice.equalsIgnoreCase("5")){
+                break;
+            }
+            else{
+                System.out.println("INVALID INPUT. PLEASE TRY AGAIN");
+            }
+
 
         }
 

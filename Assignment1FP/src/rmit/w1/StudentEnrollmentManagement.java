@@ -79,7 +79,7 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
                 System.out.println("COURSE ID, SEMESTER");
                 String userAddInput = scanner.nextLine();
                 //Check student's ID patterns
-                if(!studentIDValidate(userID,"S")){
+                if(!studentIDValidate(userID)){
                     break;
                 }
                 //Check course's ID patterns
@@ -105,7 +105,7 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
                 String userAddInput = scanner.nextLine();
 
                 //Check student's ID patterns
-                if(!studentIDValidate(userID,"S")){
+                if(!studentIDValidate(userID)){
                     break;
                 }
                 //Check course's ID patterns
@@ -376,75 +376,91 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
 
     public boolean studentAvailability(String SID) {
         int studentChecker = 0;
+        // going through Student List to compare with user's Input
         while (ListManagement.listOfStudents.size() > studentChecker) {
             if (ListManagement.listOfStudents.get(studentChecker).getStudentID().equalsIgnoreCase(SID)) {
                 return true;
             } else {
-                studentChecker = studentChecker + 1;
+                studentChecker++;
             }
         }
         return false;
     }
+
+
     public boolean courseAvailability(String CID) {
         int courseChecker = 0;
+        // going through Course List to compare with user's Input
         while (ListManagement.listOfCourses.size() > courseChecker) {
             if (ListManagement.listOfCourses.get(courseChecker).getCourseID().equalsIgnoreCase(CID)) {
                 return true;
             } else {
-                courseChecker = courseChecker + 1;
+                courseChecker++;
             }
         }
         return false;
     }
+
     public boolean enrollmentAvailability(String sid, String cid, String Semester) {
         int enrollmentChecker = 0;
+        // going through Enrollment List to compare with user's Input
         while (StudentEnrollmentManager.listOfEnrollments.size() > enrollmentChecker) {
             if (StudentEnrollmentManager.listOfEnrollments.get(enrollmentChecker).getSID().equalsIgnoreCase(sid) &&
                     StudentEnrollmentManager.listOfEnrollments.get(enrollmentChecker).getCID().equalsIgnoreCase(cid) &&
                     StudentEnrollmentManager.listOfEnrollments.get(enrollmentChecker).getSemester().equalsIgnoreCase(Semester)) {
                 return true;
             } else {
-                enrollmentChecker = enrollmentChecker + 1;
+                enrollmentChecker++;
             }
         }
         return false;
     }
-    public boolean studentIDValidate(String sid, String firstChar){
+
+    public boolean studentIDValidate(String sid) {
+        // Force UpperCase user's Input
         String newSID = sid.toUpperCase();
-        if(!newSID.matches("^[A-Z]\\d{6}")){
+
+        // Check if user's input follows a pattern
+        if (!newSID.matches("^[A-Z]\\d{6}")) {
             System.out.println("SID DOES NOT FOLLOW GIVEN PATTERN");
             return false;
         }
-        else if(!sid.split("")[0].equalsIgnoreCase(firstChar)){
+        //Check if the first character of the ID starts with S
+        else if (!sid.split("")[0].equalsIgnoreCase("S")) {
             System.out.println("SID IS NOT FOR STUDENT");
             return false;
-        }
-        else {
+        } else {
             return true;
         }
 
     }
-    public boolean courseIDValidate(String cid){
+
+    public boolean courseIDValidate(String cid) {
+        // Force UpperCase user's Input
         String newCID = cid.toUpperCase();
-        if (newCID.matches("^[A-Z]{3}\\d{4}")||newCID.matches("^[A-Z]{4}\\d{4}")){
+        // Check if user's input follows a pattern
+        if (newCID.matches("^[A-Z]{3}\\d{4}") || newCID.matches("^[A-Z]{4}\\d{4}")) {
             return true;
-        }
-        else {
+        } else {
             System.out.println("CID DOES NOT FOLLOW GIVEN PATTERN");
             return false;
         }
 
     }
-    public boolean semesterValidate(String semester){
+
+    public boolean semesterValidate(String semester) {
+        // Force UpperCase user's Input
         String newSemester = semester.toUpperCase();
-        if(!newSemester.matches("^\\d{4}[A-Z]")){
+
+        // Check if user's input follows a pattern
+        if (!newSemester.matches("^\\d{4}[A-Z]")) {
             System.out.println("INPUT DOES NOT FOLLOW GIVEN PATTERN");
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
+
     public boolean manuallyAddStudent(String input) {
         // Check if input from user has a comma in between inputs
         if (!input.contains(",")&&!input.matches("^[,][2]")) {
@@ -453,7 +469,7 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
 
         }
         // Check student ID follows the pattern
-        else if (!studentIDValidate(input.split(",")[0], "S")){
+        else if (!studentIDValidate(input.split(",")[0])){
             System.out.println("INVALID STUDENT'S ID");
             return false;
 
@@ -504,7 +520,7 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
             return false;
         }
         // Check if student existed and student's ID is validated
-        else if(!studentAvailability(input.split(",")[0])&&!studentIDValidate(input.split(",")[0], "S")) {
+        else if(!studentAvailability(input.split(",")[0])&&!studentIDValidate(input.split(",")[0])) {
             System.out.println("STUDENT EITHER HAVE NOT YET BEEN ADDED OR EXISTED");
             return false;
         }
