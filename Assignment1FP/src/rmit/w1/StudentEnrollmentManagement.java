@@ -160,108 +160,17 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
 
     @Override
     public void getOne(String sid, String cid, String semester) {
-        int count = 0;
-        assert sid != null;
-        assert cid != null;
-        assert semester != null;
-        int position;
-        // If parameter String sid is empty, run code for getting one Course from one Semester
-        if (sid.isBlank()) {
-            if (!courseIDValidate(cid)) {
-                System.out.println("CID VALIDATE ERROR");
-            } else if (!semesterValidate(semester)) {
-                System.out.println("SEMESTER VALIDATE ERROR");
-            } else if (!courseAvailability(cid)) {
-                System.out.println("COURSE AVAILABILITY ERROR");
-            } else {
-                try {
-                    while (true) {
-                        if (listOfEnrollments.get(count).getSemester().equalsIgnoreCase(semester) && listOfEnrollments.get(count).getCID().equalsIgnoreCase(cid)) {
-                            position = count;
-                            int finalPosition = position;
-                            IntStream.range(0, ListManagement.listOfCourses.size()).filter(course -> listOfEnrollments.get(finalPosition).getCID().equalsIgnoreCase(ListManagement.listOfCourses.get(course).getCourseID())).mapToObj(course -> ListManagement.listOfCourses.get(course).getCourseID() + " " + ListManagement.listOfCourses.get(course).getCourseName()).forEach(System.out::println);
-                            break;
-                        } else {
-                            count++;
-                        }
-                    }
-                } catch (IndexOutOfBoundsException e) {
-                    System.out.println("HAVE REACHED THE END OF THE LIST AND NOT FOUND THE COURSE IN THE SEMESTER");
-                }
-            }
+        if(enrollmentAvailability(sid, cid, semester)){
+            IntStream.range(0, ListManagement.listOfStudents.size()).filter(student -> ListManagement.listOfStudents.get(student).getStudentID().equalsIgnoreCase(sid)).mapToObj(student -> ListManagement.listOfStudents.get(student).getStudentID() + " " + ListManagement.listOfStudents.get(student).getStudentName()).forEach(System.out::println);
+            IntStream.range(0, ListManagement.listOfCourses.size()).filter(course -> ListManagement.listOfCourses.get(course).getCourseID().equalsIgnoreCase(cid)).mapToObj(course -> ListManagement.listOfCourses.get(course).getCourseID() + " " + ListManagement.listOfCourses.get(course).getCourseName()).forEach(System.out::println);
+            System.out.println("Semester"+" "+ semester);
+            System.out.println("\n");
         }
-        // If parameter String cid is empty, run code for getting one Student from one Semester
-        else if (cid.isBlank()) {
-            if (!studentIDValidate(sid, "S")) {
-                System.out.println("SID VALIDATE ERROR");
-            } else if (!semesterValidate(semester)) {
-                System.out.println("SEMESTER VALIDATE ERROR");
-            } else if (!studentAvailability(sid)) {
-                System.out.println("STUDENT AVAILABILITY ERROR");
-            } else {
-                try {
-                    while (true) {
-                        if (listOfEnrollments.get(count).getSemester().equalsIgnoreCase(semester) && listOfEnrollments.get(count).getSID().equalsIgnoreCase(sid)) {
-                            position = count;
-                            for (int student = 0; student < ListManagement.listOfStudents.size(); student++) {
-                                if (ListManagement.listOfStudents.get(student).getStudentID().equalsIgnoreCase(listOfEnrollments.get(position).getSID())) {
-                                    System.out.println(ListManagement.listOfStudents.get(student).getStudentID() + " " + ListManagement.listOfStudents.get(student).getStudentName());
-                                    break;
-                                }
-                            }
-                            break;
-                        } else {
-                            count++;
-                        }
-                    }
-                } catch (IndexOutOfBoundsException e) {
-                    System.out.println("HAVE REACHED THE END OF THE LIST AND NOT FOUND THE STUDENT IN THE SEMESTER");
-                }
-            }
+        else {
+            System.out.println("ENROLLMENT NOT FOUND");
         }
-        // If parameter String semester is empty, run code for getting one Student from one Course
-        else if (semester.isBlank()) {
-            if (!studentIDValidate(sid, "S")) {
-                System.out.println("SID VALIDATE ERROR");
-            }
-            if (!courseIDValidate(cid)) {
-                System.out.println("CID VALIDATE ERROR");
-            } else if (!studentAvailability(sid)) {
-                System.out.println("STUDENT AVAILABILITY ERROR");
-            } else if (!courseAvailability(cid)) {
-                System.out.println("COURSE AVAILABILITY ERROR");
-            } else {
-                try {
-                    while (true) {
-                        if (listOfEnrollments.get(count).getSID().equalsIgnoreCase(sid) && listOfEnrollments.get(count).getCID().equalsIgnoreCase(cid)) {
-                            position = count;
-                            for (int i = 0; i < listOfEnrollments.size(); i++) {
-                                if (ListManagement.listOfStudents.get(i).getStudentID().equalsIgnoreCase(listOfEnrollments.get(position).getSID())) {
-                                    System.out.println(ListManagement.listOfStudents.get(i).getStudentID() + " " + ListManagement.listOfStudents.get(i).getStudentName());
-                                    break;
-                                }
-                            }
-                            break;
-                        } else {
-                            count++;
-                        }
-                    }
-                } catch (IndexOutOfBoundsException e) {
-                    System.out.println("HAVE REACHED THE END OF THE LIST AND NOT FOUND THE STUDENT IN THE COURSE");
-                }
-            }
 
-        }
-        // If all parameters are filled, run code for getting one Enrollment
-        else if (!sid.isBlank() && !cid.isBlank() && !semester.isBlank()) {
-            for (StudentEnrollment listOfEnrollment : listOfEnrollments) {
-                if (listOfEnrollment.getSID().equalsIgnoreCase(sid) &&
-                        listOfEnrollment.getCID().equalsIgnoreCase(cid) &&
-                        listOfEnrollment.getSemester().equalsIgnoreCase(semester)) {
-                    System.out.println();
-                }
-            }
-        }
+
     }
 
     @Override
