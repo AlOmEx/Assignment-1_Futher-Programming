@@ -1,6 +1,4 @@
-package rmit.w1;
-
-import java.util.Date;
+package com.company;
 
 public class Student implements ListManagement{
     private String studentID;

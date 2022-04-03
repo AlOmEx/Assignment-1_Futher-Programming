@@ -1,4 +1,4 @@
-package rmit.w1;
+package com.company;
 
 import java.io.File;
 import java.io.FileNotFoundException;

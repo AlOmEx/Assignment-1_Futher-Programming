@@ -1,4 +1,4 @@
-package rmit.w1;
+package com.company;
 
 public class Course implements ListManagement{
     private String courseID;

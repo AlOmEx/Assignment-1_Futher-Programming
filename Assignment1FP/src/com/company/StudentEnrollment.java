@@ -1,4 +1,4 @@
-package rmit.w1;
+package com.company;
 
 public class StudentEnrollment {
     private String SID;

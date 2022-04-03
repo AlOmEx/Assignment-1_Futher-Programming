@@ -1,4 +1,4 @@
-package rmit.w1;
+package com.company;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -54,11 +54,11 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
             //Print out all courses based on user's ID
             System.out.println("YOUR CURRENT COURSES ARE: ");
             int position;
-            for (int i = 0; i < StudentEnrollmentManager.listOfEnrollments.size(); i++) {
-                if(StudentEnrollmentManager.listOfEnrollments.get(i).getSID().equalsIgnoreCase(userID)){
+            for (int i = 0; i < listOfEnrollments.size(); i++) {
+                if(listOfEnrollments.get(i).getSID().equalsIgnoreCase(userID)){
                     position = i;
                     for (int j = 0; j < ListManagement.listOfCourses.size(); j++) {
-                        if(StudentEnrollmentManager.listOfEnrollments.get(position).getCID().equalsIgnoreCase(ListManagement.listOfCourses.get(j).getCourseID())){
+                        if(listOfEnrollments.get(position).getCID().equalsIgnoreCase(ListManagement.listOfCourses.get(j).getCourseID())){
                             System.out.println(ListManagement.listOfCourses.get(j).getCourseID()+" "+ListManagement.listOfCourses.get(j).getCourseName());
                         }
                     }
@@ -185,10 +185,10 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
         ArrayList<String> courseSem = new ArrayList<>();
         if(sid.isBlank()&&cid.isBlank()&&semester.isBlank()){
             System.out.println("ENROLLMENT'S INFORMATION");
-            for (int i = 0; i < StudentEnrollmentManager.listOfEnrollments.size(); i++) {
-                System.out.printf("%-25s",StudentEnrollmentManager.listOfEnrollments.get(i).getSID());
-                System.out.printf("%-30s",StudentEnrollmentManager.listOfEnrollments.get(i).getCID());
-                System.out.println(StudentEnrollmentManager.listOfEnrollments.get(i).getSemester());
+            for (StudentEnrollment listOfEnrollment : listOfEnrollments) {
+                System.out.printf("%-25s", listOfEnrollment.getSID());
+                System.out.printf("%-30s", listOfEnrollment.getCID());
+                System.out.println(listOfEnrollment.getSemester());
             }
         }
         // If parameters String sid and String cid both are empty, run code for finding All Courses of a Semester
@@ -404,10 +404,10 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
     public boolean enrollmentAvailability(String sid, String cid, String Semester) {
         int enrollmentChecker = 0;
         // going through Enrollment List to compare with user's Input
-        while (StudentEnrollmentManager.listOfEnrollments.size() > enrollmentChecker) {
-            if (StudentEnrollmentManager.listOfEnrollments.get(enrollmentChecker).getSID().equalsIgnoreCase(sid) &&
-                    StudentEnrollmentManager.listOfEnrollments.get(enrollmentChecker).getCID().equalsIgnoreCase(cid) &&
-                    StudentEnrollmentManager.listOfEnrollments.get(enrollmentChecker).getSemester().equalsIgnoreCase(Semester)) {
+        while (listOfEnrollments.size() > enrollmentChecker) {
+            if (listOfEnrollments.get(enrollmentChecker).getSID().equalsIgnoreCase(sid) &&
+                    listOfEnrollments.get(enrollmentChecker).getCID().equalsIgnoreCase(cid) &&
+                    listOfEnrollments.get(enrollmentChecker).getSemester().equalsIgnoreCase(Semester)) {
                 return true;
             } else {
                 enrollmentChecker++;
@@ -533,7 +533,7 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
         else{
             System.out.println("PASSED VALIDATION");
             StudentEnrollment studentEnrollment = new StudentEnrollment(input.split(",")[0], input.split(",")[1], input.split(",")[2]);
-            StudentEnrollmentManager.listOfEnrollments.add(studentEnrollment);
+            listOfEnrollments.add(studentEnrollment);
             return true;
         }
     }
