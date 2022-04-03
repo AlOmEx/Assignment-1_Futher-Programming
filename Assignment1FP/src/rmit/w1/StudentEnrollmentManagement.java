@@ -183,8 +183,16 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
         ArrayList<String> Student = new ArrayList<>();
         ArrayList<String> Course = new ArrayList<>();
         ArrayList<String> courseSem = new ArrayList<>();
+        if(sid.isBlank()&&cid.isBlank()&&semester.isBlank()){
+            System.out.println("ENROLLMENT'S INFORMATION");
+            for (int i = 0; i < StudentEnrollmentManager.listOfEnrollments.size(); i++) {
+                System.out.printf("%-25s",StudentEnrollmentManager.listOfEnrollments.get(i).getSID());
+                System.out.printf("%-30s",StudentEnrollmentManager.listOfEnrollments.get(i).getCID());
+                System.out.println(StudentEnrollmentManager.listOfEnrollments.get(i).getSemester());
+            }
+        }
         // If parameters String sid and String cid both are empty, run code for finding All Courses of a Semester
-        if (sid.isBlank() && cid.isBlank()) {
+        else if (sid.isBlank() && cid.isBlank()&&!semester.isBlank()) {
             try {
 
                 System.out.println("YOUR SEMESTER HAS THESE COURSES: ");
@@ -362,6 +370,8 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
                 }
             }
         }
+
+
     }
 
     public boolean studentAvailability(String SID) {
