@@ -159,7 +159,7 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
     }
 
     @Override
-    public void getOne(String sid, String cid, String semester) {
+    public String getOne(String sid, String cid, String semester) {
         if(enrollmentAvailability(sid, cid, semester)){
             IntStream.range(0, ListManagement.listOfStudents.size()).filter(student -> ListManagement.listOfStudents.get(student).getStudentID().equalsIgnoreCase(sid)).mapToObj(student -> ListManagement.listOfStudents.get(student).getStudentID() + " " + ListManagement.listOfStudents.get(student).getStudentName()).forEach(System.out::println);
             IntStream.range(0, ListManagement.listOfCourses.size()).filter(course -> ListManagement.listOfCourses.get(course).getCourseID().equalsIgnoreCase(cid)).mapToObj(course -> ListManagement.listOfCourses.get(course).getCourseID() + " " + ListManagement.listOfCourses.get(course).getCourseName()).forEach(System.out::println);
@@ -171,6 +171,7 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
         }
 
 
+        return sid;
     }
 
     @Override
