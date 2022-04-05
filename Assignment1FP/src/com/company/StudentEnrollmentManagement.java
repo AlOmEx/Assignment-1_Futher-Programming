@@ -59,7 +59,7 @@ public class StudentEnrollmentManagement implements StudentEnrollmentManager {
                     position = i;
                     for (int j = 0; j < ListManagement.listOfCourses.size(); j++) {
                         if(listOfEnrollments.get(position).getCID().equalsIgnoreCase(ListManagement.listOfCourses.get(j).getCourseID())){
-                            System.out.println(ListManagement.listOfCourses.get(j).getCourseID()+" "+ListManagement.listOfCourses.get(j).getCourseName());
+                            System.out.println(ListManagement.listOfCourses.get(j).getCourseID()+" "+ListManagement.listOfCourses.get(j).getCourseName() +" "+ "("+listOfEnrollments.get(position).getSemester()+")");
                         }
                     }
                 }
